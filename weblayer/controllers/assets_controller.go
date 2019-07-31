@@ -15,7 +15,6 @@ import (
 	"platform2.0-go-challenge/servicelayer/services"
 )
 
-// GetAllAssets will get a user id and return all related assets.
 func GetAllAssets(w http.ResponseWriter, r *http.Request) {
 	userID := mux.Vars(r)["user_id"]
 	fmt.Println("Hi!" + userID)
@@ -32,6 +31,25 @@ func AddAudience(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&audience)
 	audience.UserID = userID
 	id, err := services.AddAudience(audience)
+	if err != nil {
+		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		log.Println(err)
+		return
+	}
+	reponseutils.SendSuccess(w, id)
+}
+
+func AddChart(w http.ResponseWriter, r *http.Request) {
+	var chart assets.Chart
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	json.NewDecoder(r.Body).Decode(&chart)
+	chart.UserID = userID
+	id, err := services.AddChart(chart)
 	if err != nil {
 		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
 		log.Println(err)

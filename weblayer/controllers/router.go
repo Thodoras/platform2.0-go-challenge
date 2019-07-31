@@ -6,4 +6,5 @@ import "github.com/gorilla/mux"
 func Route(router *mux.Router) {
 	router.HandleFunc("/assets/{id}", GetAllAssets).Methods("GET")
 	router.HandleFunc("/assets/audiences/{user_id}", AddAudience).Methods("POST")
+	router.HandleFunc("/assets/charts/{user_id}", AddChart).Methods("POST")
 }

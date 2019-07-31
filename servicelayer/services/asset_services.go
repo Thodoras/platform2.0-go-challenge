@@ -12,3 +12,7 @@ func GetAllAssets(id string) error {
 func AddAudience(audience assets.Audience) (int, error) {
 	return repositories.AddAudience(audience)
 }
+
+func AddChart(chart assets.Chart) (int, error) {
+	return repositories.AddChart(chart)
+}

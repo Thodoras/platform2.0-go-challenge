@@ -39,3 +39,13 @@ func AddAudience(audience assets.Audience) (int, error) {
 	}
 	return audienceID, nil
 }
+
+func AddChart(chart assets.Chart) (int, error) {
+	var chartID int
+	row := DB.QueryRow("INSERT INTO Charts (UserID, Title, AxisXTitle, AxisYTitle, Data) VALUES ($1, $2, $3, $4, $5) RETURNING ID", chart.UserID, chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data)
+	err := row.Scan(&chartID)
+	if err != nil {
+		return 0, err
+	}
+	return chartID, nil
+}
