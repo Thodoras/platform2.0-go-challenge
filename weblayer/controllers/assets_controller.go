@@ -1,14 +1,41 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
+
+	"platform2.0-go-challenge/helpers/logutils"
 
 	"github.com/gorilla/mux"
+	"platform2.0-go-challenge/helpers/reponseutils"
+	"platform2.0-go-challenge/models/assets"
+	"platform2.0-go-challenge/servicelayer/services"
 )
 
 // GetAllAssets will get a user id and return all related assets.
 func GetAllAssets(w http.ResponseWriter, r *http.Request) {
-	userID := mux.Vars(r)["id"]
+	userID := mux.Vars(r)["user_id"]
 	fmt.Println("Hi!" + userID)
+}
+
+func AddAudience(w http.ResponseWriter, r *http.Request) {
+	var audience assets.Audience
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	json.NewDecoder(r.Body).Decode(&audience)
+	audience.UserID = userID
+	id, err := services.AddAudience(audience)
+	if err != nil {
+		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		log.Println(err)
+		return
+	}
+	reponseutils.SendSuccess(w, id)
 }
