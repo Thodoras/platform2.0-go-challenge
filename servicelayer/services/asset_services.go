@@ -16,3 +16,7 @@ func AddAudience(audience assets.Audience) (int, error) {
 func AddChart(chart assets.Chart) (int, error) {
 	return repositories.AddChart(chart)
 }
+
+func AddInsight(insight assets.Insight) (int, error) {
+	return repositories.AddInsight(insight)
+}

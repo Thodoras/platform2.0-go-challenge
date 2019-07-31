@@ -57,3 +57,22 @@ func AddChart(w http.ResponseWriter, r *http.Request) {
 	}
 	reponseutils.SendSuccess(w, id)
 }
+
+func AddInsight(w http.ResponseWriter, r *http.Request) {
+	var insight assets.Insight
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	json.NewDecoder(r.Body).Decode(&insight)
+	insight.UserID = userID
+	id, err := services.AddInsight(insight)
+	if err != nil {
+		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		log.Println(err)
+		return
+	}
+	reponseutils.SendSuccess(w, id)
+}

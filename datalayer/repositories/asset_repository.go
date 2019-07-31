@@ -49,3 +49,13 @@ func AddChart(chart assets.Chart) (int, error) {
 	}
 	return chartID, nil
 }
+
+func AddInsight(insight assets.Insight) (int, error) {
+	var insightID int
+	row := DB.QueryRow("INSERT INTO Insights (UserID, Text) VALUES ($1, $2) RETURNING ID", insight.UserID, insight.Text)
+	err := row.Scan(&insightID)
+	if err != nil {
+		return 0, err
+	}
+	return insightID, nil
+}
