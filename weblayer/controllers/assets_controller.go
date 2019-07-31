@@ -1,8 +1,9 @@
 package controllers
 
 import (
+	"booklist/utils"
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -16,8 +17,24 @@ import (
 )
 
 func GetAllAssets(w http.ResponseWriter, r *http.Request) {
-	userID := mux.Vars(r)["user_id"]
-	fmt.Println("Hi!" + userID)
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	response, err := services.GetAllAssets(userID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			utils.SendError(w, http.StatusNotFound, utils.Error{Message: "Not Found"})
+			utils.LogError(err)
+			return
+		}
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, response)
 }
 
 func AddAudience(w http.ResponseWriter, r *http.Request) {
