@@ -3,6 +3,7 @@ package services
 import (
 	"platform2.0-go-challenge/datalayer/repositories"
 	"platform2.0-go-challenge/models/assets"
+	"platform2.0-go-challenge/servicelayer/validators/assetvalidators"
 	"platform2.0-go-challenge/weblayer/dtos/assetdtos"
 )
 
@@ -26,6 +27,11 @@ func GetAllAssets(id int) (*assetdtos.AssetReponse, error) {
 }
 
 func AddAudience(audience assets.Audience) (int, error) {
+	err := assetvalidators.ValidateAudience(audience)
+	if err != nil {
+		return -1, err
+	}
+
 	return repositories.AddAudience(audience)
 }
 
