@@ -14,14 +14,17 @@ func GetAllAssets(id int) (*assetdtos.AssetReponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	response.Charts, err = repositories.GetCharts(id)
 	if err != nil {
 		return nil, err
 	}
+
 	response.Insights, err = repositories.GetInsights(id)
 	if err != nil {
 		return nil, err
 	}
+
 	response.UserID = id
 	return &response, nil
 }
@@ -29,29 +32,54 @@ func GetAllAssets(id int) (*assetdtos.AssetReponse, error) {
 func AddAudience(audience assets.Audience) (int, error) {
 	err := assetvalidators.ValidateAudience(audience)
 	if err != nil {
-		return -1, err
+		return 0, err
 	}
 
 	return repositories.AddAudience(audience)
 }
 
 func AddChart(chart assets.Chart) (int, error) {
+	err := assetvalidators.ValidateChart(chart)
+	if err != nil {
+		return 0, err
+	}
+
 	return repositories.AddChart(chart)
 }
 
 func AddInsight(insight assets.Insight) (int, error) {
+	err := assetvalidators.ValidateInsight(insight)
+	if err != nil {
+		return 0, err
+	}
+
 	return repositories.AddInsight(insight)
 }
 
 func EditAudience(audience assets.Audience) (int64, error) {
+	err := assetvalidators.ValidateAudience(audience)
+	if err != nil {
+		return 0, err
+	}
+
 	return repositories.EditAudience(audience)
 }
 
 func EditChart(chart assets.Chart) (int64, error) {
+	err := assetvalidators.ValidateChart(chart)
+	if err != nil {
+		return 0, err
+	}
+
 	return repositories.EditChart(chart)
 }
 
 func EditInsight(insight assets.Insight) (int64, error) {
+	err := assetvalidators.ValidateInsight(insight)
+	if err != nil {
+		return 0, err
+	}
+
 	return repositories.EditInsight(insight)
 }
 

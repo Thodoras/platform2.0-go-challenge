@@ -75,6 +75,11 @@ func AddChart(w http.ResponseWriter, r *http.Request) {
 	chart.UserID = userID
 	id, err := services.AddChart(chart)
 	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
 		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
 		log.Println(err)
 		return
@@ -94,6 +99,11 @@ func AddInsight(w http.ResponseWriter, r *http.Request) {
 	insight.UserID = userID
 	id, err := services.AddInsight(insight)
 	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
 		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
 		log.Println(err)
 		return
@@ -106,6 +116,11 @@ func EditAudience(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&audience)
 	rowsAffected, err := services.EditAudience(audience)
 	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
 		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
 		utils.LogError(err)
 		return
@@ -118,6 +133,11 @@ func EditChart(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&chart)
 	rowsAffected, err := services.EditChart(chart)
 	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
 		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
 		utils.LogError(err)
 		return
@@ -130,6 +150,11 @@ func EditInsight(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&insight)
 	rowsAffected, err := services.EditInsight(insight)
 	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
 		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
 		utils.LogError(err)
 		return

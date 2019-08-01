@@ -1,15 +1,12 @@
 package assetvalidators
 
 import (
-	"errors"
 	"regexp"
 
 	"platform2.0-go-challenge/helpers/errorutils"
 
 	"platform2.0-go-challenge/models/assets"
 )
-
-const prefix string = "Validation error: "
 
 var genderRegex = regexp.MustCompile(`^(m|f)$`)
 var birthCountryRegex = regexp.MustCompile(`^[A-Za-z]{1,3}$`)
@@ -49,38 +46,33 @@ func validateGender(gender string) error {
 	if genderRegex.MatchString(gender) {
 		return nil
 	}
-	errorutils.InvalidRequest = errors.New(prefix + "Invalid gender")
-	return errorutils.InvalidRequest
+	return errorutils.NewInvalidRequest("Invalid gender")
 }
 
 func validateBirthCountry(birthCounty string) error {
 	if birthCountryRegex.MatchString(birthCounty) {
 		return nil
 	}
-	errorutils.InvalidRequest = errors.New(prefix + "Invalid birth country")
-	return errorutils.InvalidRequest
+	return errorutils.NewInvalidRequest("Invalid birth country")
 }
 
 func validateAgeGroups(ageGroup string) error {
 	if ageGroupsRegex.MatchString(ageGroup) {
 		return nil
 	}
-	errorutils.InvalidRequest = errors.New(prefix + "Invalid age group")
-	return errorutils.InvalidRequest
+	return errorutils.NewInvalidRequest("Invalid age group")
 }
 
 func validateHoursSpent(hoursSpent int) error {
 	if hoursSpent >= 0 {
 		return nil
 	}
-	errorutils.InvalidRequest = errors.New(prefix + "Invalid hours spent")
-	return errorutils.InvalidRequest
+	return errorutils.NewInvalidRequest("Invalid hours spent")
 }
 
 func validateNumOfPurchasesPerMonth(numOfPurchasesPerMonth int) error {
 	if numOfPurchasesPerMonth >= 0 {
 		return nil
 	}
-	errorutils.InvalidRequest = errors.New(prefix + "Invalid number of purchases per month")
-	return errorutils.InvalidRequest
+	return errorutils.NewInvalidRequest("Invalid number of purchases per month")
 }
