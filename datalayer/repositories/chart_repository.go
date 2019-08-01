@@ -33,3 +33,15 @@ func AddChart(chart assets.Chart) (int, error) {
 	}
 	return chartID, nil
 }
+
+func EditChart(chart assets.Chart) (int64, error) {
+	result, err := DB.Exec("UPDATE Charts SET Title=$1, AxisXTitle=$2, AxisYTitle=$3, Data=$4 WHERE id=$5 RETURNING id", chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data, chart.ID)
+	if err != nil {
+		return 0, err
+	}
+	rowsUpdate, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsUpdate, err
+}

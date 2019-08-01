@@ -33,3 +33,15 @@ func AddInsight(insight assets.Insight) (int, error) {
 	}
 	return insightID, nil
 }
+
+func EditInsight(insight assets.Insight) (int64, error) {
+	result, err := DB.Exec("UPDATE Insights SET Text=$1 WHERE id=$2 RETURNING id", insight.Text, insight.ID)
+	if err != nil {
+		return 0, err
+	}
+	rowsUpdate, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsUpdate, err
+}

@@ -93,3 +93,39 @@ func AddInsight(w http.ResponseWriter, r *http.Request) {
 	}
 	reponseutils.SendSuccess(w, id)
 }
+
+func EditAudience(w http.ResponseWriter, r *http.Request) {
+	var audience assets.Audience
+	json.NewDecoder(r.Body).Decode(&audience)
+	rowsAffected, err := services.EditAudience(audience)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsAffected)
+}
+
+func EditChart(w http.ResponseWriter, r *http.Request) {
+	var chart assets.Chart
+	json.NewDecoder(r.Body).Decode(&chart)
+	rowsAffected, err := services.EditChart(chart)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsAffected)
+}
+
+func EditInsight(w http.ResponseWriter, r *http.Request) {
+	var insight assets.Insight
+	json.NewDecoder(r.Body).Decode(&insight)
+	rowsAffected, err := services.EditInsight(insight)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsAffected)
+}

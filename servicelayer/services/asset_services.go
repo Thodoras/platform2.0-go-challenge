@@ -36,3 +36,15 @@ func AddChart(chart assets.Chart) (int, error) {
 func AddInsight(insight assets.Insight) (int, error) {
 	return repositories.AddInsight(insight)
 }
+
+func EditAudience(audience assets.Audience) (int64, error) {
+	return repositories.EditAudience(audience)
+}
+
+func EditChart(chart assets.Chart) (int64, error) {
+	return repositories.EditChart(chart)
+}
+
+func EditInsight(insight assets.Insight) (int64, error) {
+	return repositories.EditInsight(insight)
+}

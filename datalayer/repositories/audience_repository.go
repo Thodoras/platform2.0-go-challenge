@@ -33,3 +33,15 @@ func AddAudience(audience assets.Audience) (int, error) {
 	}
 	return audienceID, nil
 }
+
+func EditAudience(audience assets.Audience) (int64, error) {
+	result, err := DB.Exec("UPDATE Audiences SET Gender=$1, BirthCountry=$2, AgeGroups=$3, HoursSpent=$4, NumOfPurchasesPerMonth = $5 WHERE id=$6 RETURNING id", audience.Gender, audience.BirthCountry, audience.AgeGroups, audience.HoursSpent, audience.NumOfPurchasesPerMonth, audience.ID)
+	if err != nil {
+		return 0, err
+	}
+	rowsUpdate, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsUpdate, err
+}
