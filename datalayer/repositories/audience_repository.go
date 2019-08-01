@@ -45,3 +45,15 @@ func EditAudience(audience assets.Audience) (int64, error) {
 	}
 	return rowsUpdate, err
 }
+
+func DeleteAudience(id int) (int64, error) {
+	result, err := DB.Exec("DELETE FROM Audiences WHERE id=$1", id)
+	if err != nil {
+		return 0, err
+	}
+	rowsDeleted, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsDeleted, err
+}

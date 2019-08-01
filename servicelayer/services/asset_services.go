@@ -48,3 +48,15 @@ func EditChart(chart assets.Chart) (int64, error) {
 func EditInsight(insight assets.Insight) (int64, error) {
 	return repositories.EditInsight(insight)
 }
+
+func DeleteAudience(id int) (int64, error) {
+	return repositories.DeleteAudience(id)
+}
+
+func DeleteChart(id int) (int64, error) {
+	return repositories.DeleteChart(id)
+}
+
+func DeleteInsight(id int) (int64, error) {
+	return repositories.DeleteInsight(id)
+}

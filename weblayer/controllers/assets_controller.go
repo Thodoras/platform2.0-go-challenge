@@ -129,3 +129,51 @@ func EditInsight(w http.ResponseWriter, r *http.Request) {
 	}
 	utils.SendSuccess(w, rowsAffected)
 }
+
+func DeleteAudience(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	rowsDeleted, err := services.DeleteAudience(id)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsDeleted)
+}
+
+func DeleteChart(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	rowsDeleted, err := services.DeleteChart(id)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsDeleted)
+}
+
+func DeleteInsight(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
+		log.Println(err)
+		return
+	}
+	rowsDeleted, err := services.DeleteInsight(id)
+	if err != nil {
+		utils.SendError(w, http.StatusInternalServerError, utils.Error{Message: "Server Error"})
+		utils.LogError(err)
+		return
+	}
+	utils.SendSuccess(w, rowsDeleted)
+}
