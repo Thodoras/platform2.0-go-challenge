@@ -16,4 +16,5 @@ func Route(router *mux.Router) {
 	router.HandleFunc("/assets/insights/{user_id}/delete/{id}", DeleteInsight).Methods("DELETE")
 
 	router.HandleFunc("/users/signup", SignUp).Methods("POST")
+	router.HandleFunc("/users/login", Login).Methods("POST")
 }

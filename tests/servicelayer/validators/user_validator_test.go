@@ -74,3 +74,32 @@ func TestUserValidateorShouldReturnErrorWhenInvalidPassword(t *testing.T) {
 	testutils.AssertError(err6, t)
 	testutils.AssertError(err7, t)
 }
+
+func TestLoginValidateorShouldReturnNoErrorWhenHappyPath(t *testing.T) {
+
+	mockRequest := mockUserRequestHappyPath()
+
+	err := validators.ValidateLoginCredentials(mockRequest)
+
+	testutils.AssertNoError(err, t)
+}
+
+func TestLoginValidateorShouldReturnNoErrorWhenNameMissing(t *testing.T) {
+
+	mockRequest := mockUserRequestHappyPath()
+	mockRequest.Name = ""
+
+	err := validators.ValidateLoginCredentials(mockRequest)
+
+	testutils.AssertError(err, t)
+}
+
+func TestLoginValidateorShouldReturnNoErrorWhenNamePassword(t *testing.T) {
+
+	mockRequest := mockUserRequestHappyPath()
+	mockRequest.Password = ""
+
+	err := validators.ValidateLoginCredentials(mockRequest)
+
+	testutils.AssertError(err, t)
+}

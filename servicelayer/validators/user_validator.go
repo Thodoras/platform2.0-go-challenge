@@ -7,15 +7,21 @@ import (
 	"platform2.0-go-challenge/models"
 )
 
-const nameDescription = "Name should have no empty spaces, and be of length from 3 to 20"
-const passwordDescription = "Password should contain at least one lower case letter, one upper case and one digit and be of length from 6 to 16"
+const minNameLength = "3"
+const maxNameLength = "20"
+const minPasswordLength = "6"
+const maxPasswordLength = "16"
+const invalidNameDescription = "Name should have no empty spaces, and be of length from " + minNameLength + " to " + maxNameLength
+const invalidPasswordDescription = "Password should contain at least one lower case letter, one upper case and one digit and be of length from " + minPasswordLength + " to " + maxPasswordLength
+const nameMissingDescription = "Missing name"
+const passwordMissingDescription = "Missing password"
 
-var nameRegex = regexp.MustCompile(`^[\w]{3,20}$`)
+var nameRegex = regexp.MustCompile(`^[\w]{` + minNameLength + `,` + maxNameLength + `}$`)
 var oneUpperCaseLetter = regexp.MustCompile(`[A-Z]`)
 var oneLowerCaseLetter = regexp.MustCompile(`[a-z]`)
 var oneDigit = regexp.MustCompile(`\d`)
 var oneSpecialCharacter = regexp.MustCompile(`[!@#$%^&*]`)
-var passwordFormat = regexp.MustCompile(`^.{6,16}$`)
+var passwordFormat = regexp.MustCompile(`^.{` + minPasswordLength + `,` + maxPasswordLength + `}$`)
 
 func ValidateUser(user models.User) error {
 	var err error
@@ -37,7 +43,7 @@ func validateName(name string) error {
 		return nil
 	}
 
-	return errorutils.NewInvalidRequest(nameDescription)
+	return errorutils.NewInvalidRequest(invalidNameDescription)
 }
 
 func validatePassword(password string) error {
@@ -49,5 +55,36 @@ func validatePassword(password string) error {
 		return nil
 	}
 
-	return errorutils.NewInvalidRequest(passwordDescription)
+	return errorutils.NewInvalidRequest(invalidPasswordDescription)
+}
+
+func ValidateLoginCredentials(user models.User) error {
+	var err error
+	err = validateNameExists(user.Name)
+	if err != nil {
+		return err
+	}
+
+	err = validatePasswordExists(user.Password)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validateNameExists(name string) error {
+	if name != "" {
+		return nil
+	}
+
+	return errorutils.NewInvalidRequest(nameMissingDescription)
+}
+
+func validatePasswordExists(password string) error {
+	if password != "" {
+		return nil
+	}
+
+	return errorutils.NewInvalidRequest(passwordMissingDescription)
 }

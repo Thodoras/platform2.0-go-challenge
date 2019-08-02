@@ -33,3 +33,24 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	reponseutils.SendSuccess(w, id)
 }
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	var user models.User
+
+	json.NewDecoder(r.Body).Decode(&user)
+
+	token, err := services.Login(user)
+	if err != nil {
+		if err == errorutils.InvalidRequest {
+			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			log.Println(err)
+			return
+		}
+
+		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		log.Println(err)
+		return
+	}
+
+	reponseutils.SendSuccess(w, token)
+}
