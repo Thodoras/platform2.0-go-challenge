@@ -3,9 +3,9 @@ package validators
 import (
 	"testing"
 
-	"platform2.0-go-challenge/helpers/testutils"
-	"platform2.0-go-challenge/models"
-	"platform2.0-go-challenge/servicelayer/validators"
+	"platform2.0-go-challenge/src/helpers/testutils"
+	"platform2.0-go-challenge/src/models"
+	"platform2.0-go-challenge/src/servicelayer/validators"
 )
 
 func mockUserRequestHappyPath() models.User {
