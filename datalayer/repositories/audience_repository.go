@@ -13,13 +13,13 @@ func GetAudiences(id int) ([]models.Audience, error) {
 	defer rows.Close()
 
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 
 	for rows.Next() {
 		err := rows.Scan(&audience.ID, &audience.UserID, &audience.Gender, &audience.BirthCountry, &audience.AgeGroups, &audience.HoursSpent, &audience.NumOfPurchasesPerMonth)
 		if err != nil {
-			return nil, err
+			return result, err
 		}
 		result = append(result, audience)
 	}

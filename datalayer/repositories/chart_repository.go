@@ -13,13 +13,13 @@ func GetCharts(id int) ([]models.Chart, error) {
 	defer rows.Close()
 
 	if err != nil {
-		return nil, err
+		return result, err
 	}
 
 	for rows.Next() {
 		err := rows.Scan(&chart.ID, &chart.UserID, &chart.Title, &chart.AxisXTitle, &chart.AxisYTitle, &chart.Data)
 		if err != nil {
-			return nil, err
+			return result, err
 		}
 		result = append(result, chart)
 	}

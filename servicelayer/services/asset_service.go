@@ -7,26 +7,44 @@ import (
 	"platform2.0-go-challenge/weblayer/dtos/assetdtos"
 )
 
+const numOfAssets = 3
+
 func GetAllAssets(id int) (*assetdtos.AssetReponse, error) {
 	var response assetdtos.AssetReponse
+	errs := make(chan error)
+
+	go getAudiencesAsync(id, &response, errs)
+	go getChartsAsync(id, &response, errs)
+	go getInsightsAsync(id, &response, errs)
+
 	var err error
-	response.Audiences, err = repositories.GetAudiences(id)
-	if err != nil {
-		return nil, err
-	}
-
-	response.Charts, err = repositories.GetCharts(id)
-	if err != nil {
-		return nil, err
-	}
-
-	response.Insights, err = repositories.GetInsights(id)
-	if err != nil {
-		return nil, err
+	for i := 0; i < numOfAssets; i++ {
+		temp := <-errs
+		if temp != nil {
+			err = temp
+		}
 	}
 
 	response.UserID = id
-	return &response, nil
+	return &response, err
+}
+
+func getAudiencesAsync(id int, response *assetdtos.AssetReponse, errs chan error) {
+	audiences, err := repositories.GetAudiences(id)
+	response.Audiences = audiences
+	errs <- err
+}
+
+func getChartsAsync(id int, response *assetdtos.AssetReponse, errs chan error) {
+	charts, err := repositories.GetCharts(id)
+	response.Charts = charts
+	errs <- err
+}
+
+func getInsightsAsync(id int, response *assetdtos.AssetReponse, errs chan error) {
+	insights, err := repositories.GetInsights(id)
+	response.Insights = insights
+	errs <- err
 }
 
 func AddAudience(audience models.Audience) (int, error) {
