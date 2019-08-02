@@ -1,12 +1,15 @@
 package repositories
 
-import "platform2.0-go-challenge/models"
+import (
+	"platform2.0-go-challenge/helpers/drivers"
+	"platform2.0-go-challenge/models"
+)
 
 func GetInsights(id int) ([]models.Insight, error) {
 	var insight models.Insight
 	result := []models.Insight{}
 
-	rows, err := DB.Query("SELECT * FROM Insights WHERE UserID = $1", id)
+	rows, err := drivers.DB.Query("SELECT * FROM Insights WHERE UserID = $1", id)
 	defer rows.Close()
 
 	if err != nil {
@@ -26,7 +29,7 @@ func GetInsights(id int) ([]models.Insight, error) {
 
 func AddInsight(insight models.Insight) (int, error) {
 	var insightID int
-	row := DB.QueryRow("INSERT INTO Insights (UserID, Text) VALUES ($1, $2) RETURNING ID", insight.UserID, insight.Text)
+	row := drivers.DB.QueryRow("INSERT INTO Insights (UserID, Text) VALUES ($1, $2) RETURNING ID", insight.UserID, insight.Text)
 	err := row.Scan(&insightID)
 	if err != nil {
 		return 0, err
@@ -35,7 +38,7 @@ func AddInsight(insight models.Insight) (int, error) {
 }
 
 func EditInsight(insight models.Insight) (int64, error) {
-	result, err := DB.Exec("UPDATE Insights SET Text=$1 WHERE id=$2 RETURNING id", insight.Text, insight.ID)
+	result, err := drivers.DB.Exec("UPDATE Insights SET Text=$1 WHERE id=$2 RETURNING id", insight.Text, insight.ID)
 	if err != nil {
 		return 0, err
 	}
@@ -47,7 +50,7 @@ func EditInsight(insight models.Insight) (int64, error) {
 }
 
 func DeleteInsight(id int) (int64, error) {
-	result, err := DB.Exec("DELETE FROM Insights WHERE id=$1", id)
+	result, err := drivers.DB.Exec("DELETE FROM Insights WHERE id=$1", id)
 	if err != nil {
 		return 0, err
 	}

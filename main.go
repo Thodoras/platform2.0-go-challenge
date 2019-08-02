@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"platform2.0-go-challenge/datalayer/repositories"
 	"platform2.0-go-challenge/helpers/drivers"
 
 	"github.com/gorilla/mux"
@@ -19,7 +18,7 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	repositories.DB = drivers.ConnectPostgresDB()
+	drivers.ConnectPostgresDB()
 }
 
 func main() {
