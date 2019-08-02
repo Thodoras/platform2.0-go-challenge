@@ -1,10 +1,10 @@
 package repositories
 
-import "platform2.0-go-challenge/models/assets"
+import "platform2.0-go-challenge/models"
 
-func GetAudiences(id int) ([]assets.Audience, error) {
-	var audience assets.Audience
-	result := []assets.Audience{}
+func GetAudiences(id int) ([]models.Audience, error) {
+	var audience models.Audience
+	result := []models.Audience{}
 
 	rows, err := DB.Query("SELECT * FROM Audiences WHERE UserID = $1", id)
 	defer rows.Close()
@@ -24,7 +24,7 @@ func GetAudiences(id int) ([]assets.Audience, error) {
 	return result, nil
 }
 
-func AddAudience(audience assets.Audience) (int, error) {
+func AddAudience(audience models.Audience) (int, error) {
 	var audienceID int
 	row := DB.QueryRow("INSERT INTO Audiences (UserID, Gender, BirthCountry, AgeGroups, HoursSpent, NumOfPurchasesPerMonth) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ID", audience.UserID, audience.Gender, audience.BirthCountry, audience.AgeGroups, audience.HoursSpent, audience.NumOfPurchasesPerMonth)
 	err := row.Scan(&audienceID)
@@ -34,7 +34,7 @@ func AddAudience(audience assets.Audience) (int, error) {
 	return audienceID, nil
 }
 
-func EditAudience(audience assets.Audience) (int64, error) {
+func EditAudience(audience models.Audience) (int64, error) {
 	result, err := DB.Exec("UPDATE Audiences SET Gender=$1, BirthCountry=$2, AgeGroups=$3, HoursSpent=$4, NumOfPurchasesPerMonth = $5 WHERE id=$6 RETURNING id", audience.Gender, audience.BirthCountry, audience.AgeGroups, audience.HoursSpent, audience.NumOfPurchasesPerMonth, audience.ID)
 	if err != nil {
 		return 0, err

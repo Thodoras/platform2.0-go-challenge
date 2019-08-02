@@ -1,10 +1,10 @@
 package repositories
 
-import "platform2.0-go-challenge/models/assets"
+import "platform2.0-go-challenge/models"
 
-func GetCharts(id int) ([]assets.Chart, error) {
-	var chart assets.Chart
-	result := []assets.Chart{}
+func GetCharts(id int) ([]models.Chart, error) {
+	var chart models.Chart
+	result := []models.Chart{}
 
 	rows, err := DB.Query("SELECT * FROM Charts WHERE UserID = $1", id)
 	defer rows.Close()
@@ -24,7 +24,7 @@ func GetCharts(id int) ([]assets.Chart, error) {
 	return result, nil
 }
 
-func AddChart(chart assets.Chart) (int, error) {
+func AddChart(chart models.Chart) (int, error) {
 	var chartID int
 	row := DB.QueryRow("INSERT INTO Charts (UserID, Title, AxisXTitle, AxisYTitle, Data) VALUES ($1, $2, $3, $4, $5) RETURNING ID", chart.UserID, chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data)
 	err := row.Scan(&chartID)
@@ -34,7 +34,7 @@ func AddChart(chart assets.Chart) (int, error) {
 	return chartID, nil
 }
 
-func EditChart(chart assets.Chart) (int64, error) {
+func EditChart(chart models.Chart) (int64, error) {
 	result, err := DB.Exec("UPDATE Charts SET Title=$1, AxisXTitle=$2, AxisYTitle=$3, Data=$4 WHERE id=$5 RETURNING id", chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data, chart.ID)
 	if err != nil {
 		return 0, err

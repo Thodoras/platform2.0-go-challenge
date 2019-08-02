@@ -9,12 +9,12 @@ import (
 	"strconv"
 
 	"platform2.0-go-challenge/helpers/errorutils"
+	"platform2.0-go-challenge/models"
 
 	"platform2.0-go-challenge/helpers/logutils"
 
 	"github.com/gorilla/mux"
 	"platform2.0-go-challenge/helpers/reponseutils"
-	"platform2.0-go-challenge/models/assets"
 	"platform2.0-go-challenge/servicelayer/services"
 )
 
@@ -40,7 +40,7 @@ func GetAllAssets(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddAudience(w http.ResponseWriter, r *http.Request) {
-	var audience assets.Audience
+	var audience models.Audience
 	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
 	if err != nil {
 		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
@@ -64,7 +64,7 @@ func AddAudience(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddChart(w http.ResponseWriter, r *http.Request) {
-	var chart assets.Chart
+	var chart models.Chart
 	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
 	if err != nil {
 		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
@@ -88,7 +88,7 @@ func AddChart(w http.ResponseWriter, r *http.Request) {
 }
 
 func AddInsight(w http.ResponseWriter, r *http.Request) {
-	var insight assets.Insight
+	var insight models.Insight
 	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
 	if err != nil {
 		reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: "Bad request"})
@@ -112,7 +112,7 @@ func AddInsight(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditAudience(w http.ResponseWriter, r *http.Request) {
-	var audience assets.Audience
+	var audience models.Audience
 	json.NewDecoder(r.Body).Decode(&audience)
 	rowsAffected, err := services.EditAudience(audience)
 	if err != nil {
@@ -129,7 +129,7 @@ func EditAudience(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditChart(w http.ResponseWriter, r *http.Request) {
-	var chart assets.Chart
+	var chart models.Chart
 	json.NewDecoder(r.Body).Decode(&chart)
 	rowsAffected, err := services.EditChart(chart)
 	if err != nil {
@@ -146,7 +146,7 @@ func EditChart(w http.ResponseWriter, r *http.Request) {
 }
 
 func EditInsight(w http.ResponseWriter, r *http.Request) {
-	var insight assets.Insight
+	var insight models.Insight
 	json.NewDecoder(r.Body).Decode(&insight)
 	rowsAffected, err := services.EditInsight(insight)
 	if err != nil {

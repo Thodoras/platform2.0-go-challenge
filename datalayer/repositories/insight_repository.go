@@ -1,10 +1,10 @@
 package repositories
 
-import "platform2.0-go-challenge/models/assets"
+import "platform2.0-go-challenge/models"
 
-func GetInsights(id int) ([]assets.Insight, error) {
-	var insight assets.Insight
-	result := []assets.Insight{}
+func GetInsights(id int) ([]models.Insight, error) {
+	var insight models.Insight
+	result := []models.Insight{}
 
 	rows, err := DB.Query("SELECT * FROM Insights WHERE UserID = $1", id)
 	defer rows.Close()
@@ -24,7 +24,7 @@ func GetInsights(id int) ([]assets.Insight, error) {
 	return result, nil
 }
 
-func AddInsight(insight assets.Insight) (int, error) {
+func AddInsight(insight models.Insight) (int, error) {
 	var insightID int
 	row := DB.QueryRow("INSERT INTO Insights (UserID, Text) VALUES ($1, $2) RETURNING ID", insight.UserID, insight.Text)
 	err := row.Scan(&insightID)
@@ -34,7 +34,7 @@ func AddInsight(insight assets.Insight) (int, error) {
 	return insightID, nil
 }
 
-func EditInsight(insight assets.Insight) (int64, error) {
+func EditInsight(insight models.Insight) (int64, error) {
 	result, err := DB.Exec("UPDATE Insights SET Text=$1 WHERE id=$2 RETURNING id", insight.Text, insight.ID)
 	if err != nil {
 		return 0, err

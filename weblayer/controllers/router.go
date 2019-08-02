@@ -14,4 +14,6 @@ func Route(router *mux.Router) {
 	router.HandleFunc("/assets/audiences/{user_id}/delete/{id}", DeleteAudience).Methods("DELETE")
 	router.HandleFunc("/assets/charts/{user_id}/delete/{id}", DeleteChart).Methods("DELETE")
 	router.HandleFunc("/assets/insights/{user_id}/delete/{id}", DeleteInsight).Methods("DELETE")
+
+	router.HandleFunc("/users/signup", SignUp).Methods("POST")
 }
