@@ -37,7 +37,7 @@ func Login(user models.User) (string, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password))
 	if err != nil {
-		return "", errorutils.NewInvalidRequest("Invalid password.")
+		return "", errorutils.NewInvalidRequest("Invalid credentials.")
 	}
 
 	token, err := security.GenerateJWT(*dbUser)

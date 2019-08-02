@@ -16,7 +16,7 @@ func GetUserByName(name string) (*models.User, error) {
 	err := row.Scan(&user.ID, &user.Name, &user.Password)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errorutils.NewInvalidRequest("User with given name doesn't exist.")
+			return nil, errorutils.NewInvalidRequest("Invalid credentials.")
 		}
 		return nil, err
 	}

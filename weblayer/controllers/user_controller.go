@@ -2,13 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 
 	"platform2.0-go-challenge/helpers/errorutils"
-
-	"platform2.0-go-challenge/helpers/logutils"
-	"platform2.0-go-challenge/helpers/reponseutils"
+	"platform2.0-go-challenge/helpers/responseutils"
 	"platform2.0-go-challenge/servicelayer/services"
 
 	"platform2.0-go-challenge/models"
@@ -22,16 +21,16 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	id, err := services.SignUp(user)
 	if err != nil {
 		if err == errorutils.UniqueConstrainViolation || err == errorutils.InvalidRequest {
-			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			responseutils.SendError(w, http.StatusBadRequest, err)
 			log.Println(err)
 			return
 		}
-		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		responseutils.SendError(w, http.StatusInternalServerError, errors.New("Server Error"))
 		log.Println(err)
 		return
 	}
 
-	reponseutils.SendSuccess(w, id)
+	responseutils.SendSuccess(w, id)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -42,15 +41,15 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	token, err := services.Login(user)
 	if err != nil {
 		if err == errorutils.InvalidRequest {
-			reponseutils.SendError(w, http.StatusBadRequest, logutils.Error{Message: err.Error()})
+			responseutils.SendError(w, http.StatusBadRequest, err)
 			log.Println(err)
 			return
 		}
 
-		reponseutils.SendError(w, http.StatusInternalServerError, logutils.Error{Message: "Server Error"})
+		responseutils.SendError(w, http.StatusInternalServerError, errors.New("Server Error"))
 		log.Println(err)
 		return
 	}
 
-	reponseutils.SendSuccess(w, token)
+	responseutils.SendSuccess(w, token)
 }
