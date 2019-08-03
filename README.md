@@ -1,31 +1,143 @@
 # GlobalWebIndex Engineering Challenge
 
-## Introduction
+This is a service for signing up and logging in users. Logged in users may create, read, update or delete their relevant asset data. This service provides basic auth functionality and persists in a postgres sql database built for this reason in ```https://api.elephantsql.com/```.
 
-This challenge is designed to give you the opportunity to demonstrate your abilities as a software engineer and specifically your knowledge of the Go language.
+## How to run
 
-On the surface the challenge is trivial to solve, however you should choose to add features or capabilities which you feel demonstrate your skills and knowledge the best. For example, you could choose to optimise for performance and concurrency, you could choose to add a robust security layer or ensure your application is highly available. Or all of these.
+Assuming that docker is already installed, download (clone) the source code.
+```https://github.com/Thodoras/platform2.0-go-challenge/```
 
-Of course, usually we would choose to solve any given requirement with the simplest possible solution, however that is not the spirit of this challenge.
+After getting in the folder that the source code is downloaded build the docker image. Below is an example:
+```sudo docker build -t go-project-app .```
 
-## Challenge
+Now run the docker image. Following from the previous example run:
+```sudo docker run -it -p 8002:8001  go-project-app```
 
-In GWI we want our users to have a list of assets, things that favourite or “star” so that they have them in their frontpage dashboard.  An asset can be one the following
-Chart (that has a small title, axes titles and data)
-Insight (a small piece of text that provides some insight into a topic: e.g. 40% of millenials spend more than 3hours on social media daily)
-Audience (which is a series of characteristics, for that exercise lets focus on gender (Male, Female), birth country, age groups, hours spent on social media, number of purchases last month)
-e.g. Males from 24-35 that spent more than 3hours on social media daily.
+The above example listens to:
+```127.0.0.1:8002/```
 
-Build a web server which has some endpoint to receive a user id and return a list of all the user’s assets. Also we want endpoints that would add an asset to favourite, remove it, or edit its description. Assets obviously can share some common attributes (like their description) but they also have completely different structure and data. It’s up to you to decide the structure and we are not looking for something overly complex here (especially for the cases of audiences). There is no need to have/deploy/create an actual database although we would like to discuss about storage options and data representations.
+## API
 
-Note that users have no limit on how many assets they want on their favourites so your service will need to provide a reasonable response time.
+If it's the first time to use this service. First use
 
-A working server application with functional API is required, along with a clear readme.md. Useful and passing tests would be also be viewed favourably 
+```POST /users/signup```
 
-It is appreciated, though not required, if a Dockerfile is included.
+with a message body:
 
-## Submission
+```
+{
+  "name": "foo",
+  "password": "Fo0b4r1!@"
+}
+```
 
-Just a make a PR to the current repo!
+It should be noted that a name of 3 to 20 characters is needed and a password from 6 to 16 with at least one lower case letter, one upper case letter, one digit and one special character (!@#$%^&*).
 
-Good luck, potential colleague! 
+Then login:
+
+```POST /users/login```
+
+with the same message body used to signup. The response will contain user ```id``` and a ```token```.
+The token should be used in the headers (with key: Token, and value: the value of the 'token' field in the response), and the id should be used in the ```user_id``` section of the url.
+
+**The rest of the api is:**
+
+```GET /assets/{user_id}``` Returns all the user relevant data.
+
+The response looks like this:
+```
+{
+    "user_id": 1,
+    "audiences": [
+        {
+            "id": 0,
+            "user_id": 1,
+            "gender": "m",
+            "birth_country": "uk",
+            "age_groups": "20-30",
+            "hours_spent": 3,
+            "num_of_purchases_per_month": 1
+        },
+        {
+            "id": 2,
+            "user_id": 1,
+            "gender": "f",
+            "birth_country": "gr",
+            "age_groups": "20-30",
+            "hours_spent": 2,
+            "num_of_purchases_per_month": 0
+        },
+    ],
+    "charts": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "title": "foo",
+            "axis_x_title": "foox",
+            "axis_y_title": "fooy",
+            "data": "fooData"
+        },
+    ],
+    "insights": [
+        {
+            "id": 1,
+            "user_id": 1,
+            "text": "some text"
+        }
+    ]
+}
+```
+Alternativelly in order to secure that the request will take reasonably long the client may call the following endpoint providing ```limit``` and ```offset``` as parameters in the url.
+
+```GET /assets/paginated/{user_id}```
+
+The response will be similar with the above.
+
+
+```POST /assets/audiences/{user_id}``` To add an audience with request:
+```
+{
+	"gender": "f",
+	"birth_country": "gr",
+	"age_groups": "40-50",
+	"hours_spent": 1,
+	"num_of_purchases_per_month": 1
+}
+```
+```POST /assets/charts/{user_id}``` To add a chart with request:
+```
+{
+	"title": "ba",
+	"axis_x_title": "barx",
+	"axis_y_title": "bary",
+	"data": "barData"
+}
+```
+```POST /assets/insights/{user_id}``` To add am insight with request:
+```
+{
+	"text": "some other text"
+}
+```
+
+For the above three the response is an asset ```id``` number.
+
+```PUT /assets/audiences/{user_id}``` To update am audience (a similar request with POST) </br>
+```PUT /assets/charts/{user_id}``` To update am chart (a similar request with POST) </br>
+```PUT /assets/insights/{user_id}``` To update am insight (a similar request with POST) </br>
+
+The response for the above three requests is a number which indicate the rows that were altered (should be 1).
+
+```DELETE /assets/audiences/{user_id}/delete/{id}``` To delete an audience with a given ```id``` </br>
+```DELETE /assets/charts/{user_id}/delete/{id}``` To delete a chart with a given ```id``` </br>
+```DELETE /assets/insights/{user_id}/delete/{id}``` To delete an insight with a given ```id``` </br>
+
+Again the response for the above three requests is a number which indicate the rows that were deleted (should be 1).
+
+##Dependencies
+
+```github.com/dgrijalva/jwt-go```  for generating tokens </br>
+```go get github.com/gorilla/mux```  for creating routing points with restful verbs </br>
+```go get github.com/lib/pq```  for connecting with postgres sql </br>
+```go get github.com/subosito/gotenv```  for creating a config file with globals </br>
+```go get golang.org/x/crypto/bcrypt``` for hashing passwords to store in database and verification between hashed and hashed passwords </br>
