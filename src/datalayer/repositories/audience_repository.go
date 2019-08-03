@@ -5,11 +5,33 @@ import (
 	"platform2.0-go-challenge/src/models"
 )
 
-func GetAudiences(id int) ([]models.Audience, error) {
+func GetAudiences(userID int) ([]models.Audience, error) {
 	var audience models.Audience
 	result := []models.Audience{}
 
-	rows, err := drivers.DB.Query("SELECT * FROM Audiences WHERE UserID = $1", id)
+	rows, err := drivers.DB.Query("SELECT * FROM Audiences WHERE UserID = $1", userID)
+	defer rows.Close()
+
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&audience.ID, &audience.UserID, &audience.Gender, &audience.BirthCountry, &audience.AgeGroups, &audience.HoursSpent, &audience.NumOfPurchasesPerMonth)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, audience)
+	}
+
+	return result, nil
+}
+
+func GetAudiencesPaginated(userID, limit, offset int) ([]models.Audience, error) {
+	var audience models.Audience
+	result := []models.Audience{}
+
+	rows, err := drivers.DB.Query("SELECT * FROM Audiences WHERE UserID = $1 ORDER BY id DESC LIMIT $2 OFFSET $3", userID, limit, offset)
 	defer rows.Close()
 
 	if err != nil {

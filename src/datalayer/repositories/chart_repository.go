@@ -5,11 +5,33 @@ import (
 	"platform2.0-go-challenge/src/models"
 )
 
-func GetCharts(id int) ([]models.Chart, error) {
+func GetCharts(userID int) ([]models.Chart, error) {
 	var chart models.Chart
 	result := []models.Chart{}
 
-	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1", id)
+	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1", userID)
+	defer rows.Close()
+
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&chart.ID, &chart.UserID, &chart.Title, &chart.AxisXTitle, &chart.AxisYTitle, &chart.Data)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, chart)
+	}
+
+	return result, nil
+}
+
+func GetChartsPaginated(userID, limit, offset int) ([]models.Chart, error) {
+	var chart models.Chart
+	result := []models.Chart{}
+
+	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1 ORDER BY id DESC LIMIT $2 OFFSET $3", userID, limit, offset)
 	defer rows.Close()
 
 	if err != nil {

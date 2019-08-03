@@ -37,6 +37,56 @@ func GetAllAssets(w http.ResponseWriter, r *http.Request) {
 	responseutils.SendSuccess(w, response)
 }
 
+func GetAllAssetsPaginated(w http.ResponseWriter, r *http.Request) {
+	limit_key, ok := r.URL.Query()["limit"]
+	if !ok || len(limit_key) < 1 {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println("url parameter error")
+		return
+	}
+
+	limit, err := strconv.Atoi(limit_key[0])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	offset_key, ok := r.URL.Query()["offset"]
+	if !ok || len(offset_key) < 1 {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println("url parameter error")
+		return
+	}
+
+	offset, err := strconv.Atoi(offset_key[0])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	response, err := services.GetAllAssetsPaginated(userID, limit, offset)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			responseutils.SendError(w, http.StatusNotFound, errors.New("Not Found"))
+			log.Println(err)
+			return
+		}
+		responseutils.SendError(w, http.StatusInternalServerError, errors.New("Server Error"))
+		log.Println(err)
+		return
+	}
+	responseutils.SendSuccess(w, response)
+}
+
 func AddAudience(w http.ResponseWriter, r *http.Request) {
 	var audience models.Audience
 	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])

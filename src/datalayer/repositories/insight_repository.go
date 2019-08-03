@@ -27,6 +27,28 @@ func GetInsights(id int) ([]models.Insight, error) {
 	return result, nil
 }
 
+func GetInsightsPaginated(userID, limit, offset int) ([]models.Insight, error) {
+	var insight models.Insight
+	result := []models.Insight{}
+
+	rows, err := drivers.DB.Query("SELECT * FROM Insights WHERE UserID = $1 ORDER BY id DESC LIMIT $2 OFFSET $3", userID, limit, offset)
+	defer rows.Close()
+
+	if err != nil {
+		return result, err
+	}
+
+	for rows.Next() {
+		err := rows.Scan(&insight.ID, &insight.UserID, &insight.Text)
+		if err != nil {
+			return result, err
+		}
+		result = append(result, insight)
+	}
+
+	return result, nil
+}
+
 func AddInsight(insight models.Insight) (int, error) {
 	var insightID int
 	row := drivers.DB.QueryRow("INSERT INTO Insights (UserID, Text) VALUES ($1, $2) RETURNING ID", insight.UserID, insight.Text)

@@ -8,6 +8,7 @@ import (
 // Route will map routes to the corresponding endpoints
 func Route(router *mux.Router) {
 	router.HandleFunc("/assets/{user_id}", security.Authorize(GetAllAssets)).Methods("GET")
+	router.HandleFunc("/assets/paginated/{user_id}", security.Authorize(GetAllAssetsPaginated)).Methods("GET")
 	router.HandleFunc("/assets/audiences/{user_id}", security.Authorize(AddAudience)).Methods("POST")
 	router.HandleFunc("/assets/charts/{user_id}", security.Authorize(AddChart)).Methods("POST")
 	router.HandleFunc("/assets/insights/{user_id}", security.Authorize(AddInsight)).Methods("POST")

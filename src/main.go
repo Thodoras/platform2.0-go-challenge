@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"platform2.0-go-challenge/src/helpers/drivers"
 
@@ -24,5 +25,5 @@ func init() {
 func main() {
 	router := mux.NewRouter()
 	controllers.Route(router)
-	log.Fatal(http.ListenAndServe(":8001", router))
+	log.Fatal(http.ListenAndServe(os.Getenv("PORT"), router))
 }

@@ -9,8 +9,7 @@ import (
 var DB *sql.DB
 
 func ConnectPostgresDB() {
-	foo := os.Getenv("POSTGRES_SQL_URL")
-	db, err := sql.Open("postgres", foo)
+	db, err := sql.Open("postgres", os.Getenv("POSTGRES_SQL_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}

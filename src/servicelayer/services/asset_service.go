@@ -29,20 +29,58 @@ func GetAllAssets(id int) (*dtos.AssetReponse, error) {
 	return &response, err
 }
 
-func getAudiencesAsync(id int, response *dtos.AssetReponse, errs chan error) {
-	audiences, err := repositories.GetAudiences(id)
+func getAudiencesAsync(userID int, response *dtos.AssetReponse, errs chan error) {
+	audiences, err := repositories.GetAudiences(userID)
 	response.Audiences = audiences
 	errs <- err
 }
 
-func getChartsAsync(id int, response *dtos.AssetReponse, errs chan error) {
-	charts, err := repositories.GetCharts(id)
+func getChartsAsync(userID int, response *dtos.AssetReponse, errs chan error) {
+	charts, err := repositories.GetCharts(userID)
 	response.Charts = charts
 	errs <- err
 }
 
-func getInsightsAsync(id int, response *dtos.AssetReponse, errs chan error) {
-	insights, err := repositories.GetInsights(id)
+func getInsightsAsync(userID int, response *dtos.AssetReponse, errs chan error) {
+	insights, err := repositories.GetInsights(userID)
+	response.Insights = insights
+	errs <- err
+}
+
+func GetAllAssetsPaginated(userID, limit, offset int) (*dtos.AssetReponse, error) {
+	var response dtos.AssetReponse
+	errs := make(chan error)
+
+	go getAudiencesPaginatedAsync(userID, limit, offset, &response, errs)
+	go getChartsPaginatedAsync(userID, limit, offset, &response, errs)
+	go getInsightsPaginatedAsync(userID, limit, offset, &response, errs)
+
+	var err error
+	for i := 0; i < numOfAssets; i++ {
+		temp := <-errs
+		if temp != nil {
+			err = temp
+		}
+	}
+
+	response.UserID = userID
+	return &response, err
+}
+
+func getAudiencesPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
+	audiences, err := repositories.GetAudiencesPaginated(userID, limit, offset)
+	response.Audiences = audiences
+	errs <- err
+}
+
+func getChartsPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
+	charts, err := repositories.GetChartsPaginated(userID, limit, offset)
+	response.Charts = charts
+	errs <- err
+}
+
+func getInsightsPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
+	insights, err := repositories.GetInsightsPaginated(userID, limit, offset)
 	response.Insights = insights
 	errs <- err
 }
