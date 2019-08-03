@@ -37,7 +37,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	json.NewDecoder(r.Body).Decode(&user)
 
-	token, err := services.Login(user)
+	response, err := services.Login(user)
 	if err != nil {
 		if err == errorutils.InvalidRequest {
 			responseutils.SendError(w, http.StatusBadRequest, err)
@@ -50,5 +50,5 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	responseutils.SendSuccess(w, token)
+	responseutils.SendSuccess(w, response)
 }
