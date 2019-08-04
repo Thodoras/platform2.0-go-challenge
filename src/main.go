@@ -5,10 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"platform2.0-go-challenge/src/helpers/drivers"
-
 	"github.com/gorilla/mux"
-	"platform2.0-go-challenge/src/weblayer/controllers"
 
 	_ "github.com/lib/pq"
 	"github.com/subosito/gotenv"
@@ -19,11 +16,11 @@ func init() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	drivers.ConnectPostgresDB()
+	wireDependencies()
 }
 
 func main() {
 	router := mux.NewRouter()
-	controllers.Route(router)
+	route(router)
 	log.Fatal(http.ListenAndServe(os.Getenv("PORT"), router))
 }

@@ -6,9 +6,7 @@ import (
 	"os"
 )
 
-var DB *sql.DB
-
-func ConnectPostgresDB() {
+func ConnectPostgresDB() *sql.DB {
 	db, err := sql.Open("postgres", os.Getenv("POSTGRES_SQL_URL"))
 	if err != nil {
 		log.Fatal(err)
@@ -19,5 +17,5 @@ func ConnectPostgresDB() {
 		log.Fatal(err)
 	}
 
-	DB = db
+	return db
 }
