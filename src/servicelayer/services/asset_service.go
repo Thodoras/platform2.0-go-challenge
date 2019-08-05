@@ -9,13 +9,13 @@ import (
 
 const numOfAssets = 3
 
-func GetAllAssets(id int) (*dtos.AssetReponse, error) {
+func GetAllAssets(id int, onlyFavourites bool) (*dtos.AssetReponse, error) {
 	var response dtos.AssetReponse
 	errs := make(chan error)
 
-	go getAudiencesAsync(id, &response, errs)
-	go getChartsAsync(id, &response, errs)
-	go getInsightsAsync(id, &response, errs)
+	go getAudiencesAsync(id, onlyFavourites, &response, errs)
+	go getChartsAsync(id, onlyFavourites, &response, errs)
+	go getInsightsAsync(id, onlyFavourites, &response, errs)
 
 	var err error
 	for i := 0; i < numOfAssets; i++ {
@@ -29,31 +29,31 @@ func GetAllAssets(id int) (*dtos.AssetReponse, error) {
 	return &response, err
 }
 
-func getAudiencesAsync(userID int, response *dtos.AssetReponse, errs chan error) {
-	audiences, err := repositories.GetAudiences(userID)
+func getAudiencesAsync(userID int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	audiences, err := repositories.GetAudiences(userID, onlyFavourites)
 	response.Audiences = audiences
 	errs <- err
 }
 
-func getChartsAsync(userID int, response *dtos.AssetReponse, errs chan error) {
-	charts, err := repositories.GetCharts(userID)
+func getChartsAsync(userID int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	charts, err := repositories.GetCharts(userID, onlyFavourites)
 	response.Charts = charts
 	errs <- err
 }
 
-func getInsightsAsync(userID int, response *dtos.AssetReponse, errs chan error) {
-	insights, err := repositories.GetInsights(userID)
+func getInsightsAsync(userID int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	insights, err := repositories.GetInsights(userID, onlyFavourites)
 	response.Insights = insights
 	errs <- err
 }
 
-func GetAllAssetsPaginated(userID, limit, offset int) (*dtos.AssetReponse, error) {
+func GetAllAssetsPaginated(userID, limit, offset int, onlyFavourites bool) (*dtos.AssetReponse, error) {
 	var response dtos.AssetReponse
 	errs := make(chan error)
 
-	go getAudiencesPaginatedAsync(userID, limit, offset, &response, errs)
-	go getChartsPaginatedAsync(userID, limit, offset, &response, errs)
-	go getInsightsPaginatedAsync(userID, limit, offset, &response, errs)
+	go getAudiencesPaginatedAsync(userID, limit, offset, onlyFavourites, &response, errs)
+	go getChartsPaginatedAsync(userID, limit, offset, onlyFavourites, &response, errs)
+	go getInsightsPaginatedAsync(userID, limit, offset, onlyFavourites, &response, errs)
 
 	var err error
 	for i := 0; i < numOfAssets; i++ {
@@ -67,20 +67,20 @@ func GetAllAssetsPaginated(userID, limit, offset int) (*dtos.AssetReponse, error
 	return &response, err
 }
 
-func getAudiencesPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
-	audiences, err := repositories.GetAudiencesPaginated(userID, limit, offset)
+func getAudiencesPaginatedAsync(userID, limit, offset int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	audiences, err := repositories.GetAudiencesPaginated(userID, limit, offset, onlyFavourites)
 	response.Audiences = audiences
 	errs <- err
 }
 
-func getChartsPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
-	charts, err := repositories.GetChartsPaginated(userID, limit, offset)
+func getChartsPaginatedAsync(userID, limit, offset int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	charts, err := repositories.GetChartsPaginated(userID, limit, offset, onlyFavourites)
 	response.Charts = charts
 	errs <- err
 }
 
-func getInsightsPaginatedAsync(userID, limit, offset int, response *dtos.AssetReponse, errs chan error) {
-	insights, err := repositories.GetInsightsPaginated(userID, limit, offset)
+func getInsightsPaginatedAsync(userID, limit, offset int, onlyFavourites bool, response *dtos.AssetReponse, errs chan error) {
+	insights, err := repositories.GetInsightsPaginated(userID, limit, offset, onlyFavourites)
 	response.Insights = insights
 	errs <- err
 }

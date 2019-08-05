@@ -23,7 +23,28 @@ func GetAllAssets(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	response, err := services.GetAllAssets(userID)
+	response, err := services.GetAllAssets(userID, false)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			responseutils.SendError(w, http.StatusNotFound, errors.New("Not Found"))
+			log.Println(err)
+			return
+		}
+		responseutils.SendError(w, http.StatusInternalServerError, errors.New("Server Error"))
+		log.Println(err)
+		return
+	}
+	responseutils.SendSuccess(w, response)
+}
+
+func GetAllAssetsFavourite(w http.ResponseWriter, r *http.Request) {
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+	response, err := services.GetAllAssets(userID, true)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			responseutils.SendError(w, http.StatusNotFound, errors.New("Not Found"))
@@ -73,7 +94,57 @@ func GetAllAssetsPaginated(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response, err := services.GetAllAssetsPaginated(userID, limit, offset)
+	response, err := services.GetAllAssetsPaginated(userID, limit, offset, false)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			responseutils.SendError(w, http.StatusNotFound, errors.New("Not Found"))
+			log.Println(err)
+			return
+		}
+		responseutils.SendError(w, http.StatusInternalServerError, errors.New("Server Error"))
+		log.Println(err)
+		return
+	}
+	responseutils.SendSuccess(w, response)
+}
+
+func GetAllAssetsPaginatedFavourite(w http.ResponseWriter, r *http.Request) {
+	limit_key, ok := r.URL.Query()["limit"]
+	if !ok || len(limit_key) < 1 {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println("url parameter error")
+		return
+	}
+
+	limit, err := strconv.Atoi(limit_key[0])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	offset_key, ok := r.URL.Query()["offset"]
+	if !ok || len(offset_key) < 1 {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println("url parameter error")
+		return
+	}
+
+	offset, err := strconv.Atoi(offset_key[0])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	userID, err := strconv.Atoi(mux.Vars(r)["user_id"])
+	if err != nil {
+		responseutils.SendError(w, http.StatusBadRequest, errors.New("Bad request"))
+		log.Println(err)
+		return
+	}
+
+	response, err := services.GetAllAssetsPaginated(userID, limit, offset, true)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			responseutils.SendError(w, http.StatusNotFound, errors.New("Not Found"))

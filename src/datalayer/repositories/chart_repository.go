@@ -5,11 +5,11 @@ import (
 	"platform2.0-go-challenge/src/models"
 )
 
-func GetCharts(userID int) ([]models.Chart, error) {
+func GetCharts(userID int, onlyFavourites bool) ([]models.Chart, error) {
 	var chart models.Chart
 	result := []models.Chart{}
 
-	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1", userID)
+	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1 "+getQuerySuffix(onlyFavourites), userID)
 	defer rows.Close()
 
 	if err != nil {
@@ -17,7 +17,15 @@ func GetCharts(userID int) ([]models.Chart, error) {
 	}
 
 	for rows.Next() {
-		err := rows.Scan(&chart.ID, &chart.UserID, &chart.Title, &chart.AxisXTitle, &chart.AxisYTitle, &chart.Data)
+		err := rows.Scan(
+			&chart.ID,
+			&chart.UserID,
+			&chart.Title,
+			&chart.AxisXTitle,
+			&chart.AxisYTitle,
+			&chart.Data,
+			&chart.Favourite,
+		)
 		if err != nil {
 			return result, err
 		}
@@ -27,11 +35,11 @@ func GetCharts(userID int) ([]models.Chart, error) {
 	return result, nil
 }
 
-func GetChartsPaginated(userID, limit, offset int) ([]models.Chart, error) {
+func GetChartsPaginated(userID, limit, offset int, onlyFavourites bool) ([]models.Chart, error) {
 	var chart models.Chart
 	result := []models.Chart{}
 
-	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1 ORDER BY id DESC LIMIT $2 OFFSET $3", userID, limit, offset)
+	rows, err := drivers.DB.Query("SELECT * FROM Charts WHERE UserID = $1 "+getQuerySuffix(onlyFavourites)+" ORDER BY id DESC LIMIT $2 OFFSET $3", userID, getQuerySuffix(onlyFavourites), limit, offset)
 	defer rows.Close()
 
 	if err != nil {
@@ -39,7 +47,15 @@ func GetChartsPaginated(userID, limit, offset int) ([]models.Chart, error) {
 	}
 
 	for rows.Next() {
-		err := rows.Scan(&chart.ID, &chart.UserID, &chart.Title, &chart.AxisXTitle, &chart.AxisYTitle, &chart.Data)
+		err := rows.Scan(
+			&chart.ID,
+			&chart.UserID,
+			&chart.Title,
+			&chart.AxisXTitle,
+			&chart.AxisYTitle,
+			&chart.Data,
+			&chart.Favourite,
+		)
 		if err != nil {
 			return result, err
 		}
@@ -51,7 +67,7 @@ func GetChartsPaginated(userID, limit, offset int) ([]models.Chart, error) {
 
 func AddChart(chart models.Chart) (int, error) {
 	var chartID int
-	row := drivers.DB.QueryRow("INSERT INTO Charts (UserID, Title, AxisXTitle, AxisYTitle, Data) VALUES ($1, $2, $3, $4, $5) RETURNING ID", chart.UserID, chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data)
+	row := drivers.DB.QueryRow("INSERT INTO Charts (UserID, Title, AxisXTitle, AxisYTitle, Data, Favourite) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ID", chart.UserID, chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data, chart.Favourite)
 	err := row.Scan(&chartID)
 	if err != nil {
 		return 0, err
@@ -60,7 +76,7 @@ func AddChart(chart models.Chart) (int, error) {
 }
 
 func EditChart(chart models.Chart) (int64, error) {
-	result, err := drivers.DB.Exec("UPDATE Charts SET Title=$1, AxisXTitle=$2, AxisYTitle=$3, Data=$4 WHERE id=$5 RETURNING id", chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data, chart.ID)
+	result, err := drivers.DB.Exec("UPDATE Charts SET Title=$1, AxisXTitle=$2, AxisYTitle=$3, Data=$4, Favourite=$5 WHERE id=$6 RETURNING id", chart.Title, chart.AxisXTitle, chart.AxisYTitle, chart.Data, chart.Favourite, chart.ID)
 	if err != nil {
 		return 0, err
 	}
