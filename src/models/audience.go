@@ -2,8 +2,7 @@ package models
 
 // Audience models audience in database
 type Audience struct {
-	ID                     int    `json:"id"`
-	UserID                 int    `json:"user_id"`
+	UserAsset
 	Gender                 string `json:"gender"`
 	BirthCountry           string `json:"birth_country"`
 	AgeGroups              string `json:"age_groups"`
