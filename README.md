@@ -89,7 +89,12 @@ The response looks like this:
 ```
 Alternativelly in order to secure that the request will take reasonably long the client may call the following endpoint providing ```limit``` and ```offset``` as parameters in the url.
 
-```GET /assets/paginated/{user_id}```
+```GET /assets/paginated/{user_id}```</br>
+
+The following are simillar with the above two endpoints but return only the favoured by the user assets.</br>
+```GET /assets/{user_id}/favourites``` </br>
+```GET /assets/paginated/{user_id}/favourites```
+
 
 The response will be similar with the above.
 
